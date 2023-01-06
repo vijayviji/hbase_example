@@ -18,7 +18,7 @@
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
 
-    <hbase-version>2.5.2</hbase-version>
+    <hbase-version>1.7.2</hbase-version>
   </properties>
 
   <dependencies>

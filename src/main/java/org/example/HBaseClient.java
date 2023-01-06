@@ -7,12 +7,12 @@ import java.util.List;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.CellUtil;
+import org.apache.hadoop.hbase.HColumnDescriptor;
+import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.MasterNotRunningException;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.ZooKeeperConnectionException;
 import org.apache.hadoop.hbase.client.Admin;
-import org.apache.hadoop.hbase.client.ColumnFamilyDescriptor;
-import org.apache.hadoop.hbase.client.ColumnFamilyDescriptorBuilder;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Delete;
@@ -22,8 +22,6 @@ import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.client.Table;
-import org.apache.hadoop.hbase.client.TableDescriptor;
-import org.apache.hadoop.hbase.client.TableDescriptorBuilder;
 import org.apache.hadoop.hbase.util.Bytes;
 
 public class HBaseClient implements AutoCloseable {
@@ -48,14 +46,12 @@ public class HBaseClient implements AutoCloseable {
     if (admin.tableExists(TableName.valueOf(tableName))) {
       System.out.println(new LogObj("TableAlreadyExists").add("status", "skippingCreation"));
     } else {
-      List<ColumnFamilyDescriptor> cfds = new ArrayList<>();
+      HTableDescriptor hTableDescriptor = new HTableDescriptor(TableName.valueOf(tableName));
       for (String columnFamily : columnFamilies) {
-        ColumnFamilyDescriptor cfd = ColumnFamilyDescriptorBuilder
-            .newBuilder(Bytes.toBytes(columnFamily)).build();
-        cfds.add(cfd);
+        HColumnDescriptor columnDescriptor = new HColumnDescriptor(columnFamily);
+        hTableDescriptor.addFamily(columnDescriptor);
       }
-      TableDescriptor tableDesc = TableDescriptorBuilder.newBuilder(
-          TableName.valueOf(tableName)).setColumnFamilies(cfds).build();
+      HTableDescriptor tableDesc = new HTableDescriptor(TableName.valueOf(tableName), hTableDescriptor);
       admin.createTable(tableDesc);
       System.out.println(new LogObj("CreatedTable").add("table", tableName));
     }
