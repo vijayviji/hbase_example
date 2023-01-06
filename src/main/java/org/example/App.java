@@ -3,13 +3,12 @@ package org.example;
 public class App {
     public static void main(String[] agrs) {
         String confFilePath = "/Users/vsomasundaram/Code/__hbase/conf/hbase-site.xml";
-        //String confFilePath = "/home/y/libexec/hbase/conf/hbase-site.xml";
         try(HBaseClient client = new HBaseClient(confFilePath)) {
-            String tablename = "chakra:votes";
-            String[] families = { "f" };
+            String tableName = "dummyTableName";
+            String[] columnFamilies = { "f" };
 
             System.out.println("===========printing one record========");
-            client.printRow(tablename, "testing");
+            client.printRow(tableName, "testing");
             System.out.println("===========done printing record========");
         } catch (Exception e) {
             throw new RuntimeException(e);
